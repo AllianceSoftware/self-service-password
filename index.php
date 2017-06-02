@@ -171,6 +171,7 @@ $mailer->LE            = $mail_newline;
     <link rel="stylesheet" type="text/css" href="css/self-service-password.css" />
     <link href="images/favicon.ico" rel="icon" type="image/x-icon" />
     <link href="images/favicon.ico" rel="shortcut icon" />
+	<script type="text/javascript" src="js/zxcvbn.js"></script>
 <?php if (isset($background_image)) { ?>
      <style>
        html, body {
@@ -220,6 +221,64 @@ $mailer->LE            = $mail_newline;
 
 <script src="js/jquery-1.10.2.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
+
+<?php
+$use_zxcvbn = true;
+if ($use_zxcvbn) {
+?>
+	<script type="text/javascript">
+		$(document).ready(function() {
+			$('#newpassword').keyup(function () {
+				result = zxcvbn($(this).val());
+				if (result.score == 0) {
+					width = '10%';
+					color = 'red';
+				} else if (result.score == 1) {
+					width = '20%';
+					color = 'red';
+				} else if (result.score == 2) {
+					width = '40%';
+					color = 'yellow';
+				} else if (result.score == 3) {
+					width = '60%';
+					color = 'yellow';
+				} else if (result.score == 4) {
+					width = '80%';
+					color = 'green';
+				} else if (result.score == 5) {
+					width = '100%';
+					color = 'green';
+				}
+				$('#password-strength').css('width', width).css('background-color', color);
+				if (result.score < 3) {
+					$('#password-feedback').show();
+					$('#password-warning').html(result.feedback.warning);
+					$('#password-suggestions').html('');
+					$.each(result.feedback.suggestions, function(i, v) {
+						$('#password-suggestions').append(v + '<br/>');
+					});
+					
+				} else {
+					$('#password-feedback').hide();
+					$('#password-warning').html('');
+					$('#password-suggestions').html('');
+				}
+			}).keyup();
+			
+			$('form').submit(function() {
+				result = zxcvbn($('#newpassword').val());
+				if (result.score < 3) {
+					alert('Please choose a stronger password.\n\n' + result.feedback.warning + '\n\n' + result.feedback.suggestions);
+					return false;
+				} else {
+					return true;
+				}
+			});
+		});
+	</script>
+<?php
+}
+?>
 
 </body>
 </html>

@@ -266,6 +266,7 @@ if ($pwd_show_policy_pos === 'above') {
                 <span class="input-group-addon"><i class="fa fa-fw fa-lock"></i></span>
                 <input type="password" name="newpassword" id="newpassword" class="form-control" placeholder="<?php echo $messages["newpassword"]; ?>" />
             </div>
+			<div id="password-strength" style="height: 1em;"></div>
         </div>
     </div>
     <div class="form-group">
@@ -285,6 +286,13 @@ if ($pwd_show_policy_pos === 'above') {
         </div>
     </div>
 <?php } ?>
+	<div id="password-feedback" class="form-group">
+		<div class="col-sm-4">&nbsp;</div>
+		<div class="col-sm-8 alert alert-danger">
+			<div id="password-warning">Your password is bad</div>
+			<div id="password-suggestions">And you should feel bad</div>
+		</div>
+	</div>
     <div class="form-group">
         <div class="col-sm-offset-4 col-sm-8">
             <button type="submit" class="btn btn-success">
