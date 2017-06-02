@@ -259,8 +259,8 @@ if ($pwd_show_policy_pos === 'above') {
             <div class="input-group">
                 <span class="input-group-addon"><i class="fa fa-fw fa-lock"></i></span>
                 <input type="password" name="newpassword" id="newpassword" class="form-control" placeholder="<?php echo $messages["newpassword"]; ?>" />
-				<div id="password-strength" style="height: 1em;"></div>
             </div>
+			<div id="password-strength" style="height: 1em;"></div>
         </div>
     </div>
     <div class="form-group">
