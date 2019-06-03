@@ -38,8 +38,8 @@ $attempts = 0;
 if (!$crypt_tokens) {
     $result = "crypttokensrequired";
 } elseif (isset($_REQUEST["smstoken"]) and isset($_REQUEST["token"])) {
-    $token = $_REQUEST["token"];
-    $smstoken = $_REQUEST["smstoken"];
+    $token = strval($_REQUEST["token"]);
+    $smstoken = strval($_REQUEST["smstoken"]);
 
     # Open session with the token
     $tokenid = decrypt($token, $keyphrase);
@@ -98,13 +98,10 @@ if (!$crypt_tokens) {
     $login = $decrypted_sms_login[1];
     $result = "sendsms";
 } elseif (isset($_REQUEST["login"]) and $_REQUEST["login"]) {
-    $login = $_REQUEST["login"];
+    $login = strval($_REQUEST["login"]);
 } else {
     $result = "emptysendsmsform";
 }
-
-# Strip slashes added by PHP
-$login = stripslashes_if_gpc_magic_quotes($login);
 
 # Check the entered username for characters that our installation doesn't support
 if ( $result === "" ) {
@@ -113,19 +110,8 @@ if ( $result === "" ) {
 
 #==============================================================================
 # Check reCAPTCHA
-#==============================================================================
-if ( $result === "" ) {
-    if ( $use_recaptcha ) {
-        $recaptcha = new \ReCaptcha\ReCaptcha($recaptcha_privatekey);
-        $resp = $recaptcha->verify($_POST['g-recaptcha-response'], $_SERVER['REMOTE_ADDR']);
-        if (!$resp->isSuccess()) {
-            $result = "badcaptcha";
-            error_log("Bad reCAPTCHA attempt with user $login");
-            foreach ($resp->getErrorCodes() as $code) {
-                error_log("reCAPTCHA error: $code");
-            }
-        }
-    }
+if ( $result === "" && $use_recaptcha ) {
+    $result = check_recaptcha($recaptcha_privatekey, $recaptcha_request_method, $_POST['g-recaptcha-response'], $login);
 }
 
 #==============================================================================
@@ -149,10 +135,12 @@ if ( $result === "" ) {
         $bind = ldap_bind($ldap);
     }
 
-    $errno = ldap_errno($ldap);
-    if ( $errno ) {
+    if ( !$bind ) {
         $result = "ldaperror";
-        error_log("LDAP - Bind error $errno (".ldap_error($ldap).")");
+        $errno = ldap_errno($ldap);
+        if ( $errno ) {
+            error_log("LDAP - Bind error $errno  (".ldap_error($ldap).")");
+        }
     } else {
 
     # Search for user
@@ -180,6 +168,12 @@ if ( $result === "" ) {
     # Check sms number
     if ( $smsValues["count"] > 0 ) {
         $sms = $smsValues[0];
+        if ( $sms_sanitize_number ) {
+            $sms = preg_replace('/[^0-9]/', '', $sms);
+        }
+        if ( $sms_truncate_number ) {
+            $sms = substr($sms, -$sms_truncate_number_length);
+        }
     }
 
     if ( !$sms ) {
@@ -213,24 +207,50 @@ if ( $result === "sendsms" ) {
     $_SESSION['time']     = time();
     $_SESSION['attempts'] = 0;
 
-    # Remove plus and spaces from sms number
-    $sms = str_replace('+', '', $sms);
-    $sms = str_replace(' ', '', $sms);
-
     $data = array( "sms_attribute" => $sms, "smsresetmessage" => $messages['smsresetmessage'], "smstoken" => $smstoken) ;
 
     # Send message
-    if ( send_mail($mailer, $smsmailto, $mail_from, $mail_from_name, $smsmail_subject, $sms_message, $data) ) {
-        $token  = encrypt(session_id(), $keyphrase);
-        $result = "smssent";
-        if ( !empty($reset_request_log) ) {
-            error_log("Send SMS code $smstoken to $sms\n\n", 3, $reset_request_log);
+
+    if( !$sms_method ) { $sms_method = "mail"; }
+
+    if ( $sms_method === "mail" ) {
+
+        if ( send_mail($mailer, $smsmailto, $mail_from, $mail_from_name, $smsmail_subject, $sms_message, $data) ) {
+            $token  = encrypt(session_id(), $keyphrase);
+            $result = "smssent";
+            if ( !empty($reset_request_log) ) {
+                error_log("Send SMS code $smstoken by $sms_method to $sms\n\n", 3, $reset_request_log);
+            } else {
+                error_log("Send SMS code $smstoken by $sms_method to $sms");
+            }
         } else {
-            error_log("Send SMS code $smstoken to $sms");
+            $result = "smsnotsent";
+            error_log("Error while sending sms by $sms_method to $sms (user $login)");
         }
-    } else {
-        $result = "smsnotsent";
-        error_log("Error while sending sms to $sms (user $login)");
+
+    }
+
+    if ( $sms_method === "api" ) {
+        if (!$sms_api_lib) {
+            $result = "smsnotsent";
+            error_log('No API library found, set $sms_api_lib in configuration.');
+        } else {
+            include_once($sms_api_lib);
+            $sms_message = str_replace('{smsresetmessage}', $messages['smsresetmessage'], $sms_message);
+            $sms_message = str_replace('{smstoken}', $smstoken, $sms_message);
+            if ( send_sms_by_api($sms, $sms_message) ) {
+                $token  = encrypt(session_id(), $keyphrase);
+                $result = "smssent";
+                if ( !empty($reset_request_log) ) {
+                    error_log("Send SMS code $smstoken by $sms_method to $sms\n\n", 3, $reset_request_log);
+                } else {
+                    error_log("Send SMS code $smstoken by $sms_method to $sms");
+                }
+            } else {
+                $result = "smsnotsent";
+                error_log("Error while sending sms by $sms_method to $sms (user $login)");
+            }
+        }
     }
 
 }
@@ -295,6 +315,7 @@ if ( $result === "redirect" ) {
 #==============================================================================
 # HTML
 #==============================================================================
+if ( in_array($result, $obscure_failure_messages) ) { $result = "badcredentials"; }
 ?>
 
 <div class="result alert alert-<?php echo get_criticity($result) ?>">

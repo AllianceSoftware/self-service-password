@@ -27,6 +27,7 @@
 $messages['phpupgraderequired'] = "PHP upgrade required";
 $messages['nophpldap'] = "Cal instal·lar PHP LDAP per fer servir aquesta eina";
 $messages['nophpmhash'] = "Cal instal·lar PHP mhash per fer servir el mode Samba";
+$messages['nokeyphrase'] = "Token encryption requires a random string in keyphrase setting";
 $messages['ldaperror'] = "No es pot accedir al servidor LDAP";
 $messages['loginrequired'] = "Cal el nom d'usuari";
 $messages['oldpasswordrequired'] = "Cal la contrasenya anterior";
@@ -80,6 +81,7 @@ $messages['changehelpsms'] = "<a href=\"?action=sendsms\">Reset your password wi
 $messages['resetmessage'] = "Hola {login},\n\nFer clic aquÃ­ per restaurar la vostra contrasenya:\n{url}\n\nSi no heu demanat aquest servei, si us plau ignoreu-lo.";
 $messages['resetsubject'] = "Restaurar la contrasenya";
 $messages['sendtokenhelp'] = "Escriviu el vostre usuari i correu per restaurar la contrasenya. Rebreu un correu per confirmar-ho.";
+$messages['sendtokenhelpnomail'] = "Escriviu el vostre usuari per restaurar la contrasenya. Rebreu un correu per confirmar-ho.";
 $messages['resetbysmshelp'] = "The token sent by sms allows you to reset your password. To get a new token, <a href=\"?action=sendsms\">click here</a>.";
 $messages['mail'] = "Correu";
 $messages['mailrequired'] = "Cal el vostre correu";
@@ -131,5 +133,5 @@ $messages['menusshkey'] = "claus SSH";
 $messages['changehelpsshkey'] = "<a href=\"?action=changesshkey\">Canviar la clau d'SSH</a>";
 $messages['changesshkeyhelp'] = "Introduïu la contrasenya i la clau SSH.";
 $messages['changesshkeymessage'] = "Hola {login},\n\nLa claus SSH s'ha canviat.\n\nSi no va iniciar aquest canvi, poseu-vos en contacte amb l'administrador immediatament.";
-
-?>
+$messages['pwned'] = "Your new password has already been published on leaks, you should consider changing it on any other service that it is in use";
+$messages['policypwned'] = "Your new password may not be published on any previous public password leak from any site";

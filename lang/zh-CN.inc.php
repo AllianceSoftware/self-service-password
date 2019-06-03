@@ -25,6 +25,7 @@
 $messages['phpupgraderequired'] = "PHP upgrade required";
 $messages['nophpldap'] = "您需要安装 PHP LDAP 才能使用本工具";
 $messages['nophpmhash'] = "您需要安装 PHP mhash 才能使用 Samba 模式";
+$messages['nokeyphrase'] = "Token encryption requires a random string in keyphrase setting";
 $messages['ldaperror'] = "不能访问 LDAP 服务器";
 $messages['loginrequired'] = "请输入用户名";
 $messages['oldpasswordrequired'] = "请输入旧密码";
@@ -84,6 +85,7 @@ $messages['changesshkeyhelp'] = "输入您的密码和新的 SSH 密钥。";
 $messages['resetmessage'] = "{login} 您好，\n\n点击以下链接重置您的密码:\n{url}\n\n如果您没有请求修改密码，请忽略该邮件。";
 $messages['resetsubject'] = "重置您的密码";
 $messages['sendtokenhelp'] = "输入您的用户名和邮箱重置您的密码。收到邮件后，点击链接完成重置密码。";
+$messages['sendtokenhelpnomail'] = "输入您的用户名重置您的密码。收到邮件后，点击链接完成重置密码。";
 $messages['mail'] = "邮箱";
 $messages['mailrequired'] = "请输入您的邮箱";
 $messages['mailnomatch'] = "邮箱与用户邮箱不一致";
@@ -127,5 +129,5 @@ $messages['emptysetquestionsform'] = "Set your password reset questions";
 $messages['emptysendsmsform'] = "Get a reset code";
 $messages['sameaslogin'] = "您的新密码与您的用户名相同";
 $messages['policydifflogin'] = "您的新密码不能与您的用户名相同";
-
-?>
+$messages['pwned'] = "Your new password has already been published on leaks, you should consider changing it on any other service that it is in use";
+$messages['policypwned'] = "Your new password may not be published on any previous public password leak from any site";

@@ -33,17 +33,13 @@ $userdn = "";
 $token = "";
 
 if (!$mail_address_use_ldap) {
-    if (isset($_POST["mail"]) and $_POST["mail"]) { $mail = $_POST["mail"]; }
+    if (isset($_POST["mail"]) and $_POST["mail"]) { $mail = strval($_POST["mail"]); }
      else { $result = "mailrequired"; }
 }
-if (isset($_REQUEST["login"]) and $_REQUEST["login"]) { $login = $_REQUEST["login"]; }
+if (isset($_REQUEST["login"]) and $_REQUEST["login"]) { $login = strval($_REQUEST["login"]); }
  else { $result = "loginrequired"; }
 if (! isset($_POST["mail"]) and ! isset($_REQUEST["login"]))
  { $result = "emptysendtokenform"; }
-
-# Strip slashes added by PHP
-$login = stripslashes_if_gpc_magic_quotes($login);
-$mail = stripslashes_if_gpc_magic_quotes($mail);
 
 # Check the entered username for characters that our installation doesn't support
 if ( $result === "" ) {
@@ -53,18 +49,8 @@ if ( $result === "" ) {
 #==============================================================================
 # Check reCAPTCHA
 #==============================================================================
-if ( $result === "" ) {
-    if ( $use_recaptcha ) {
-        $recaptcha = new \ReCaptcha\ReCaptcha($recaptcha_privatekey);
-        $resp = $recaptcha->verify($_POST['g-recaptcha-response'], $_SERVER['REMOTE_ADDR']);
-        if (!$resp->isSuccess()) {
-            $result = "badcaptcha";
-            error_log("Bad reCAPTCHA attempt with user $login");
-            foreach ($resp->getErrorCodes() as $code) {
-                error_log("reCAPTCHA error: $code");
-            }
-        }
-    }
+if ( $result === "" && $use_recaptcha ) {
+    $result = check_recaptcha($recaptcha_privatekey, $recaptcha_request_method, $_POST['g-recaptcha-response'], $login);
 }
 
 #==============================================================================
@@ -88,10 +74,12 @@ if ( $result === "" ) {
         $bind = ldap_bind($ldap);
     }
 
-    $errno = ldap_errno($ldap);
-    if ( $errno ) {
+    if ( !$bind ) {
         $result = "ldaperror";
-        error_log("LDAP - Bind error $errno (".ldap_error($ldap).")");
+        $errno = ldap_errno($ldap);
+        if ( $errno ) {
+            error_log("LDAP - Bind error $errno  (".ldap_error($ldap).")");
+        }
     } else {
 
     # Search for user
@@ -221,6 +209,7 @@ if ( $result === "" ) {
 #==============================================================================
 # HTML
 #==============================================================================
+if ( in_array($result, $obscure_failure_messages) ) { $result = "badcredentials"; }
 ?>
 
 <div class="result alert alert-<?php echo get_criticity($result) ?>">
@@ -233,7 +222,11 @@ if ( $result === "" ) {
 if ( $show_help ) {
     echo "<div class=\"help alert alert-warning\"><p>";
     echo "<i class=\"fa fa-fw fa-info-circle\"></i> ";
-    echo $messages["sendtokenhelp"];
+    if ( $mail_address_use_ldap ) {
+        echo $messages["sendtokenhelpnomail"];
+    } else {
+        echo $messages["sendtokenhelp"];
+    }
     echo "</p></div>\n";
 }
 ?>

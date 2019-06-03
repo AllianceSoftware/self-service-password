@@ -25,6 +25,7 @@
 $messages['phpupgraderequired'] = "PHP upgrade required";
 $messages['nophpldap'] = "Você deve instalar o PHP LDAP para utilizar esta ferramenta";
 $messages['nophpmhash'] = "Você deve instalar o PHP mhash para utilizar o Samba mode";
+$messages['nokeyphrase'] = "Token encryption requires a random string in keyphrase setting";
 $messages['ldaperror'] = "Não foi possível acessar o diretório LDAP";
 $messages['loginrequired'] = "O seu login é necessário";
 $messages['oldpasswordrequired'] = "A senha atual é necessária";
@@ -76,7 +77,8 @@ $messages['changehelpquestions'] = "<a href=\"?action=resetbyquestions\">Redefin
 $messages['changehelptoken'] = "<a href=\"?action=sendtoken\">Redefina sua senha através do e-mail</a>";
 $messages['resetmessage'] = "Olá {login},\n\nClique aqui para redefinir sua senha:\n{url}\n\nSe você não tem certeza desta requisição, por favor, ignore este e-mail.";
 $messages['resetsubject'] = "Redefina sua senha";
-$messages['sendtokenhelp'] = "Entre com o seu login e senha para redefinir sua senha. Em seguida clique no link enviado pelo e-mail.";
+$messages['sendtokenhelp'] = "Entre com o seu login e e-mail para redefinir sua senha. Em seguida clique no link enviado pelo e-mail.";
+$messages['sendtokenhelpnomail'] = "Entre com o seu login para redefinir sua senha. Em seguida clique no link enviado pelo e-mail.";
 $messages['mail'] = "E-mail";
 $messages['mailrequired'] = "O e-mail é necessário";
 $messages['mailnomatch'] = "O e-mail não coincide com nenhum usuário";
@@ -127,5 +129,5 @@ $messages['sshkey'] = "Chave SSH";
 $messages['emptysshkeychangeform'] = "Alterar a chave SSH";
 $messages['changesshkeyhelp'] = "Digite sua senha e a nova chave SSH.";
 $messages['sshkeyerror'] = "A chave SSH foi recusada pelo diretório LDAP";
-
-?>
+$messages['pwned'] = "Your new password has already been published on leaks, you should consider changing it on any other service that it is in use";
+$messages['policypwned'] = "Your new password may not be published on any previous public password leak from any site";

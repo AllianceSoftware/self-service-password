@@ -25,6 +25,7 @@
 $messages['phpupgraderequired'] = "PHP upgrade required";
 $messages['nophpldap'] = "Απαιτείται η εγκατάσταση του πρόσθετου PHP LDAP για τη λειτουργία αυτής της εφαρμογής";
 $messages['nophpmhash'] = "Απαιτείται η εγκατάσταση του πρόσθετου PHP mhash για τη χρήση Samba";
+$messages['nokeyphrase'] = "Token encryption requires a random string in keyphrase setting";
 $messages['ldaperror'] = "Αδυναμία πρόσβασης στην υπηρεσία καταλόγου";
 $messages['loginrequired'] = "Απαιτείται η καταχώρηση του ονόματος χρήστη";
 $messages['oldpasswordrequired'] = "Απαιτείται η καταχώρηση του ισχύοντος κωδικού σας";
@@ -79,6 +80,7 @@ $messages['changehelpsms'] = "<a href=\"?action=sendsms\">Αλλάξτε τον 
 $messages['resetmessage'] = "Γειά σας {login},\n\nΕπιλέξτε αυτό το σύνδεσμο για να αλλάξετε τον κωδικό σας:\n{url}\n\nΑν δεν έχετε ζητήσει αλλαγή κωδικού, παρακαλούμε να αγνοήσετε αυτό το μήνυμα.";
 $messages['resetsubject'] = "Αλλάξτε τον κωδικό σας";
 $messages['sendtokenhelp'] = "Καταχωρήστε το όνομα χρήστη και τη διεύθυνση ηλεκτρονικού ταχυδρομείου για να αλλάξετε τον κωδικό σας. Όταν λάβετε το email, επιλέξτε το σύνδεσμο που περιέχει για να ολοκληρώσετε την αλλαγή κωδικού.";
+$messages['sendtokenhelpnomail'] = "Καταχωρήστε το όνομα χρήστη για να αλλάξετε τον κωδικό σας. Όταν λάβετε το email, επιλέξτε το σύνδεσμο που περιέχει για να ολοκληρώσετε την αλλαγή κωδικού.";
 $messages['mail'] = "Mail";
 $messages['mailrequired'] = "Απαιτείται η διεύθυνση ηλεκτρονικού ταχυδρομείου σας";
 $messages['mailnomatch'] = "Η διεύθυνση ηλεκτρονικού ταχυδρομείου δεν αντιστοιχεί σε αυτό το όνομα χρήστη";
@@ -127,5 +129,5 @@ $messages['sshkeyrequired'] = "SSH Key απαιτείται";
 $messages['menusshkey'] = "SSH Key";
 $messages['changehelpsshkey'] = "<a href=\"?action=changesshkey\">Αλλάξτε SSH Key σας</a>";
 $messages['sshkey'] = "SSH Key";
-
-?>
+$messages['pwned'] = "Your new password has already been published on leaks, you should consider changing it on any other service that it is in use";
+$messages['policypwned'] = "Your new password may not be published on any previous public password leak from any site";

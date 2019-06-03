@@ -25,6 +25,7 @@
 $messages['phpupgraderequired'] = "Use mise à jour de PHP est requise";
 $messages['nophpldap'] = "Vous devriez installer PHP LDAP pour utiliser cet outil";
 $messages['nophpmhash'] = "Vous devriez installer PHP mhash pour utiliser le mode Samba";
+$messages['nokeyphrase'] = "Vous devez configurer keyphrase pour que le chiffrement fonctionne";
 $messages['ldaperror'] = "Erreur d'acc&egrave;s &agrave; l'annuaire";
 $messages['loginrequired'] = "Vous devez indiquer votre identifiant";
 $messages['oldpasswordrequired'] = "Vous devez indiquer votre ancien mot de passe";
@@ -78,6 +79,7 @@ $messages['changehelpsms'] = "<a href=\"?action=sendsms\">Réinitialisez votre m
 $messages['resetmessage'] = "Bonjour {login},\n\nCliquez ici pour réinitialiser votre mot de passe :\n{url}\n\nSi vous n'êtes pas à l'origine de cette demande, merci de l'ignorer.";
 $messages['resetsubject'] = "Réinitialisation de votre mot de passe";
 $messages['sendtokenhelp'] = "Entrez votre identifiant et votre adresse mail pour réinitialiser votre mot de passe. Cliquez ensuite sur le lien transmis par mail.";
+$messages['sendtokenhelpnomail'] = "Entrez votre identifiant pour réinitialiser votre mot de passe. Cliquez ensuite sur le lien transmis par mail.";
 $messages['mail'] = "Adresse mail";
 $messages['mailrequired'] = "Vous devez indiquer votre adresse mail";
 $messages['mailnomatch'] = "L'adresse mail ne correspond pas à l'identifiant donné";
@@ -124,7 +126,8 @@ $messages['sshkeychanged'] = "Votre clé SSH a été modifiée";
 $messages['sshkeyrequired'] = "La clé SSH est requise";
 $messages['changesshkeysubject'] = "Votre clé SSH a été modifiée";
 $messages['sshkey'] = "Clé SSH";
-$messages['emptysshkeychangeform'] = "Changer votre clé SSH";
+$messages['emptysshkeychangeform'] = "Changez votre clé SSH";
 $messages['changesshkeyhelp'] = "Entrez votre mot de passe et la nouvelle clé SSH.";
-$messages['sshkeyerror'] = "La clé SSH a été refusée par le répertoire LDAP";
-?>
+$messages['sshkeyerror'] = "La clé SSH a été refusée par l'annuaire  LDAP";
+$messages['pwned'] = "Your new password has already been published on leaks, you should consider changing it on any other service that it is in use";
+$messages['policypwned'] = "Your new password may not be published on any previous public password leak from any site";

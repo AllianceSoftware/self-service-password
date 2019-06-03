@@ -20,8 +20,19 @@
 #==============================================================================
 
 #==============================================================================
+# All the default values are kept here, you should not modify it but use
+# config.inc.local.php file instead to override the settings from here.
+#==============================================================================
+
+#==============================================================================
 # Configuration
 #==============================================================================
+
+# Debug mode
+# true: log and display any errors or warnings (use this in configuration/testing)
+# false: log only errors and do not display them (use this in production)
+$debug = false;
+
 # LDAP
 $ldap_url = "ldap://localhost";
 $ldap_starttls = false;
@@ -60,9 +71,8 @@ $shadow_options['update_shadowExpire'] = false;
 $shadow_options['shadow_expire_days'] = -1;
 
 # Hash mechanism for password:
-# SSHA
-# SHA
-# SHA512
+# SSHA, SSHA256, SSHA384, SSHA512
+# SHA, SHA256, SHA384, SHA512
 # SMD5
 # MD5
 # CRYPT
@@ -99,6 +109,8 @@ $pwd_no_reuse = true;
 $pwd_diff_login = true;
 # Complexity: number of different class of character required
 $pwd_complexity = 0;
+# use pwnedpasswords api v2 to securely check if the password has been on a leak
+$use_pwnedpasswords = false;
 # Show policy constraints message:
 # always
 # never
@@ -146,6 +158,9 @@ $use_questions = true;
 $answer_objectClass = "extensibleObject";
 $answer_attribute = "info";
 
+# Crypt answers inside the directory
+$crypt_answers = true;
+
 # Extra questions (built-in questions are in lang/$lang.inc.php)
 #$messages['questions']['ice'] = "What is your favorite ice cream flavor?";
 
@@ -178,7 +193,7 @@ $notify_on_change = false;
 $mail_sendmailpath = '/usr/sbin/sendmail';
 $mail_protocol = 'smtp';
 $mail_smtp_debug = 0;
-$mail_debug_format = 'html';
+$mail_debug_format = 'error_log';
 $mail_smtp_host = 'localhost';
 $mail_smtp_auth = false;
 $mail_smtp_user = '';
@@ -187,6 +202,7 @@ $mail_smtp_port = 25;
 $mail_smtp_timeout = 30;
 $mail_smtp_keepalive = false;
 $mail_smtp_secure = 'tls';
+$mail_smtp_autotls = true;
 $mail_contenttype = 'text/plain';
 $mail_wordwrap = 0;
 $mail_charset = 'utf-8';
@@ -196,6 +212,9 @@ $mail_newline = PHP_EOL;
 ## SMS
 # Use sms
 $use_sms = true;
+# SMS method (mail, api)
+$sms_method = "mail";
+$sms_api_lib = "lib/smsapi.inc.php";
 # GSM number attribute
 $sms_attribute = "mobile";
 # Partially hide number
@@ -206,12 +225,20 @@ $smsmailto = "{sms_attribute}@service.provider.com";
 $smsmail_subject = "Provider code";
 # Message
 $sms_message = "{smsresetmessage} {smstoken}";
-
+# Remove non digit characters from GSM number
+$sms_sanitize_number = false;
+# Truncate GSM number
+$sms_truncate_number = false;
+$sms_truncate_number_length = 10;
 # SMS token length
 $sms_token_length = 6;
-
 # Max attempts allowed for SMS token
 $max_attempts = 3;
+
+# Encryption, decryption keyphrase, required if $crypt_tokens = true
+# Please change it to anything long, random and complicated, you do not have to remember it
+# Changing it will also invalidate all previous tokens and SMS codes
+$keyphrase = "secret";
 
 # Reset URL (if behind a reverse proxy)
 #$reset_url = $_SERVER['HTTP_X_FORWARDED_PROTO'] . "://" . $_SERVER['HTTP_X_FORWARDED_HOST'] . $_SERVER['SCRIPT_NAME'];
@@ -219,8 +246,12 @@ $max_attempts = 3;
 # Display help messages
 $show_help = true;
 
-# Language
-$lang ="en";
+# Default language
+$lang = "en";
+
+# List of authorized languages. If empty, all language are allowed.
+# If not empty and the user's browser language setting is not in that list, language from $lang will be used.
+$allowed_lang = array();
 
 # Display menu on top
 $show_menu = true;
@@ -230,12 +261,6 @@ $logo = "images/ltb-logo.png";
 
 # Background image
 $background_image = "images/unsplash-space.jpeg";
-
-# Debug mode
-$debug = false;
-
-# Encryption, decryption keyphrase
-$keyphrase = "secret";
 
 # Where to log password resets - Make sure apache has write permission
 # By default, they are logged in Apache log
@@ -256,6 +281,9 @@ $recaptcha_privatekey = "";
 $recaptcha_theme = "light";
 $recaptcha_type = "image";
 $recaptcha_size = "normal";
+# reCAPTCHA request method, null for default, Fully Qualified Class Name to override
+# Useful when allow_url_fopen=0 ex. $recaptcha_request_method = '\ReCaptcha\RequestMethod\CurlPost';
+$recaptcha_request_method = null;
 
 ## Default action
 # change
@@ -270,5 +298,13 @@ $default_action = "change";
 
 # Launch a posthook script after successful password change
 #$posthook = "/usr/share/self-service-password/posthook.sh";
+#$display_posthook_error = true;
 
-?>
+# Hide some messages to not disclose sensitive information
+# These messages will be replaced by badcredentials error
+#$obscure_failure_messages = array("mailnomatch");
+
+# Allow to override current settings with local configuration
+if (file_exists (__DIR__ . '/config.inc.local.php')) {
+    require __DIR__ . '/config.inc.local.php';
+}

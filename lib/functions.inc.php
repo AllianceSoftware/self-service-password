@@ -26,9 +26,42 @@ function make_ssha_password($password) {
     return $hash;
 }
 
+# Create SSHA256 password
+function make_ssha256_password($password) {
+    $salt = random_bytes(4);
+    $hash = "{SSHA256}" . base64_encode(pack("H*", hash('sha256', $password . $salt)) . $salt);
+    return $hash;
+}
+
+# Create SSHA384 password
+function make_ssha384_password($password) {
+    $salt = random_bytes(4);
+    $hash = "{SSHA384}" . base64_encode(pack("H*", hash('sha384', $password . $salt)) . $salt);
+    return $hash;
+}
+
+# Create SSHA512 password
+function make_ssha512_password($password) {
+    $salt = random_bytes(4);
+    $hash = "{SSHA512}" . base64_encode(pack("H*", hash('sha512', $password . $salt)) . $salt);
+    return $hash;
+}
+
 # Create SHA password
 function make_sha_password($password) {
     $hash = "{SHA}" . base64_encode(pack("H*", sha1($password)));
+    return $hash;
+}
+
+# Create SHA256 password
+function make_sha256_password($password) {
+    $hash = "{SHA256}" . base64_encode(pack("H*", hash('sha256', $password)));
+    return $hash;
+}
+
+# Create SHA384 password
+function make_sha384_password($password) {
+    $hash = "{SHA384}" . base64_encode(pack("H*", hash('sha384', $password)));
     return $hash;
 }
 
@@ -108,24 +141,14 @@ function generate_sms_token( $sms_token_length ) {
     return $smstoken;
 }
 
-# Strip slashes added by PHP
-# Only if magic_quote_gpc is not set to off in php.ini
-function stripslashes_if_gpc_magic_quotes( $string ) {
-    if(get_magic_quotes_gpc()) {
-        return stripslashes($string);
-    } else {
-        return $string;
-    }
-}
-
 # Get message criticity
 function get_criticity( $msg ) {
 
-    if ( preg_match( "/nophpldap|phpupgraderequired|nophpmhash|ldaperror|nomatch|badcredentials|passworderror|tooshort|toobig|minlower|minupper|mindigit|minspecial|forbiddenchars|sameasold|answermoderror|answernomatch|mailnomatch|tokennotsent|tokennotvalid|notcomplex|smsnonumber|smscrypttokensrequired|nophpmbstring|nophpxml|smsnotsent|sameaslogin/" , $msg ) ) {
+    if ( preg_match( "/nophpldap|phpupgraderequired|nophpmhash|nokeyphrase|ldaperror|nomatch|badcredentials|passworderror|tooshort|toobig|minlower|minupper|mindigit|minspecial|forbiddenchars|sameasold|answermoderror|answernomatch|mailnomatch|tokennotsent|tokennotvalid|notcomplex|smsnonumber|smscrypttokensrequired|nophpmbstring|nophpxml|smsnotsent|sameaslogin|pwned|sshkeyerror/" , $msg ) ) {
     return "danger";
     }
 
-    if ( preg_match( "/(login|oldpassword|newpassword|confirmpassword|answer|question|password|mail|token)required|badcaptcha|tokenattempts/" , $msg ) ) {
+    if ( preg_match( "/(login|oldpassword|newpassword|confirmpassword|answer|question|password|mail|token|sshkey)required|badcaptcha|tokenattempts/" , $msg ) ) {
         return "warning";
     }
 
@@ -151,7 +174,7 @@ function show_policy( $messages, $pwd_policy_config, $result ) {
     # Should we display it?
     if ( !$pwd_show_policy or $pwd_show_policy === "never" ) { return; }
     if ( $pwd_show_policy === "onerror" ) {
-        if ( !preg_match( "/tooshort|toobig|minlower|minupper|mindigit|minspecial|forbiddenchars|sameasold|notcomplex|sameaslogin/" , $result) ) { return; }
+        if ( !preg_match( "/tooshort|toobig|minlower|minupper|mindigit|minspecial|forbiddenchars|sameasold|notcomplex|sameaslogin|pwned/" , $result) ) { return; }
     }
 
     # Display bloc
@@ -168,6 +191,7 @@ function show_policy( $messages, $pwd_policy_config, $result ) {
     if ( $pwd_forbidden_chars ) { echo "<li>".$messages["policyforbiddenchars"] ." $pwd_forbidden_chars</li>\n"; }
     if ( $pwd_no_reuse        ) { echo "<li>".$messages["policynoreuse"]                                 ."\n"; }
     if ( $pwd_diff_login      ) { echo "<li>".$messages["policydifflogin"]                               ."\n"; }
+    if ( $use_pwnedpasswords  ) { echo "<li>".$messages["policypwned"]                               ."\n"; }
     echo "</ul>\n";
     echo "</div>\n";
 }
@@ -235,6 +259,15 @@ function check_password_strength( $password, $oldpassword, $pwd_policy_config, $
 
     # Same as login?
     if ( $pwd_diff_login and $password === $login ) { $result="sameaslogin"; }
+	
+	# pwned?
+	if ($use_pwnedpasswords) {
+		$pwned_passwords = new PwnedPasswords\PwnedPasswords;
+		
+		$insecure = $pwned_passwords->isInsecure($password);
+		
+		if($insecure) { $result="pwned"; }	
+	}
 
     return $result;
 }
@@ -280,8 +313,23 @@ function change_password( $ldap, $dn, $password, $ad_mode, $ad_options, $samba_m
         if ( $hash == "SSHA" ) {
             $password = make_ssha_password($password);
         }
+        if ( $hash == "SSHA256" ) {
+            $password = make_ssha256_password($password);
+        }
+        if ( $hash == "SSHA384" ) {
+            $password = make_ssha384_password($password);
+        }
+        if ( $hash == "SSHA512" ) {
+            $password = make_ssha512_password($password);
+        }
         if ( $hash == "SHA" ) {
             $password = make_sha_password($password);
+        }
+        if ( $hash == "SHA256" ) {
+            $password = make_sha256_password($password);
+        }
+        if ( $hash == "SHA384" ) {
+            $password = make_sha384_password($password);
         }
         if ( $hash == "SHA512" ) {
             $password = make_sha512_password($password);
@@ -488,4 +536,25 @@ function check_username_validity($username,$login_forbidden_chars) {
     return $result;
 }
 
-?>
+/* @function string check_recaptcha(string $recaptcha_privatekey, null|string $recaptcha_request_method, string $response, string $login)
+ * Check if $response verifies the reCAPTCHA by asking the recaptcha server, logs if errors
+ * @param $recaptcha_privatekey string shared secret with reCAPTCHA server
+ * @param $recaptcha_request_method null|string FQCN of request method, null for default
+ * @param $response string response provided by user
+ * @param $login string for logging purposes only
+ * @return string empty string if the response is verified successfully, else string 'badcaptcha'
+ */
+function check_recaptcha($recaptcha_privatekey, $recaptcha_request_method, $response, $login) {
+    $recaptcha = new \ReCaptcha\ReCaptcha($recaptcha_privatekey, is_null($recaptcha_request_method) ? null : new $recaptcha_request_method());
+    $resp = $recaptcha->verify($response, $_SERVER['REMOTE_ADDR']);
+
+    if (!$resp->isSuccess()) {
+        error_log("Bad reCAPTCHA attempt with user $login");
+        foreach ($resp->getErrorCodes() as $code) {
+            error_log("reCAPTCHA error: $code");
+        }
+        return 'badcaptcha';
+    }
+
+    return '';
+}

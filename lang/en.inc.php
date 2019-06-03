@@ -25,6 +25,7 @@
 $messages['phpupgraderequired'] = "PHP upgrade required";
 $messages['nophpldap'] = "You should install PHP LDAP to use this tool";
 $messages['nophpmhash'] = "You should install PHP mhash to use Samba mode";
+$messages['nokeyphrase'] = "Token encryption requires a random string in keyphrase setting";
 $messages['ldaperror'] = "Cannot access LDAP directory";
 $messages['loginrequired'] = "Your login is required";
 $messages['oldpasswordrequired'] = "Your old password is required";
@@ -84,6 +85,7 @@ $messages['changesshkeyhelp'] = "Enter your password and new SSH key.";
 $messages['resetmessage'] = "Hello {login},\n\nClick here to reset your password:\n{url}\n\nIf you didn't request a password reset, please ignore this email.";
 $messages['resetsubject'] = "Reset your password";
 $messages['sendtokenhelp'] = "Enter your user name and your email address to reset your password. When you receive the email, click the link inside to complete the password reset.";
+$messages['sendtokenhelpnomail'] = "Enter your user name to reset your password. An email will be sent to the address associated with the supplied user name. When you receive this email, click the link inside to complete the password reset.";
 $messages['mail'] = "Mail";
 $messages['mailrequired'] = "Your email address is required";
 $messages['mailnomatch'] = "The email address does not match the submitted user name";
@@ -127,5 +129,5 @@ $messages['emptysetquestionsform'] = "Set your password reset questions";
 $messages['emptysendsmsform'] = "Get a reset code";
 $messages['sameaslogin'] = "Your new password is identical to your login";
 $messages['policydifflogin'] = "Your new password may not be the same as your login";
-
-?>
+$messages['pwned'] = "Your new password has already been published on leaks, you should consider changing it on any other service that it is in use";
+$messages['policypwned'] = "Your new password may not be published on any previous public password leak from any site";

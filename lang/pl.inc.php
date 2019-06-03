@@ -25,6 +25,7 @@
 $messages['phpupgraderequired'] = "PHP upgrade required";
 $messages['nophpldap'] = "Wymagane jest zainstalowanie PHP-LDAP zanim użyjesz tego narzędzia";
 $messages['nophpmhash'] = "Wymagane jest zainstalowanie PHP-mhash przed użyciem trybu Samba";
+$messages['nokeyphrase'] = "Token encryption requires a random string in keyphrase setting";
 $messages['ldaperror'] = "Nie można połączyć się z bazą LDAP";
 $messages['loginrequired'] = "Wymagany jest Twój login";
 $messages['oldpasswordrequired'] = "Wymagane jest Twoje stare hasło";
@@ -80,6 +81,7 @@ $messages['changehelpsms'] = "<a href=\"?action=sendsms\">Reset your password wi
 $messages['resetmessage'] = "Dzień dobry {login},\n\nKliknij tutaj w celu ustawienia swojego hasła:\n{url}\n\nJeśli to nie Ty wybierałeś zmianę hasła, zignoruj tę wiadomość.";
 $messages['resetsubject'] = "[BSD Serwis][Zmiana hasła] Ustaw ponownie swoje hasło";
 $messages['sendtokenhelp'] = "Wprowadź swój login oraz adres email w celu ponownego ustawienia hasła. Następnie wybierz Wyślij w celu wysłania listu.";
+$messages['sendtokenhelpnomail'] = "Wprowadź swój login w celu ponownego ustawienia hasła. Następnie wybierz Wyślij w celu wysłania listu.";
 $messages['mail'] = "Email";
 $messages['mailrequired'] = "Wymagane jest podanie adresu email";
 $messages['mailnomatch'] = "Podany email nie pasuje do loginu";
@@ -129,5 +131,5 @@ $messages['sshkey'] = "SSH Key";
 $messages['emptysshkeychangeform'] = "Zmień swój klucz SSH";
 $messages['changesshkeyhelp'] = "Wprowadź swoje hasło i nowy klucz SSH.";
 $messages['sshkeyerror'] = "SSH Key został odrzucony przez katalogu LDAP";
-
-?>
+$messages['pwned'] = "Your new password has already been published on leaks, you should consider changing it on any other service that it is in use";
+$messages['policypwned'] = "Your new password may not be published on any previous public password leak from any site";
